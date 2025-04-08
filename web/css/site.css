@@ -1,0 +1,86 @@
+/*Start - web/css/site.css*/
+/* styles.css */
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 2vw;
+background-color: #f5f5f5;
+}
+.crud-container {
+max-width: 90vw;
+margin: 0 auto;
+background-color: white;
+padding: 2vw;
+border-radius: 0.5vw;
+box-shadow: 0 0 1vw rgba(0, 0, 0, 0.1);
+}
+h1 {
+font-size: 2vw;
+margin-bottom: 2vw;
+color: #333;
+}
+.crud-table {
+width: 100%;
+border-collapse: collapse;
+margin-bottom: 2vw;
+}
+.crud-table th, 
+.crud-table td {
+padding: 1vw;
+text-align: left;
+border-bottom: 0.1vw solid #ddd;
+}
+.crud-table th {
+background-color: #f2f2f2;
+font-weight: bold;
+}
+.crud-table tr:hover {
+background-color: #f9f9f9;
+}
+.actions {
+display: flex;
+gap: 0.5vw;
+}
+.edit-btn, 
+.del-btn, 
+.add-btn {
+padding: 0.5vw 1vw;
+border: none;
+border-radius: 0.3vw;
+cursor: pointer;
+font-size: 0.9vw;
+}
+.edit-btn {
+background-color: #4CAF50;
+color: white;
+}
+.del-btn {
+background-color: #f44336;
+color: white;
+}
+.add-btn {
+background-color: #2196F3;
+color: white;
+padding: 0.8vw 1.5vw;
+font-size: 1vw;
+}
+.divider {
+border: 0;
+height: 0.1vw;
+background-color: #ddd;
+margin: 2vw 0;
+}
+.crud-actions {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.download-link {
+color: #2196F3;
+text-decoration: none;
+font-size: 1vw;
+}
+.download-link:hover {
+text-decoration: underline;
+}
+/*End - web/css/site.css*/
