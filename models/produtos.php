@@ -3,29 +3,22 @@
 namespace app\models;
 use yii\db\ActiveRecord;
 
-class Produtos extends ActiveRecord{
-	
-	private $id;
-	private $ativo;
-	private $nome;
-	private $quantidade;
-	private $categoria;
-	
-	public function rules(){
-		return[
-			[
-				[
-					'id',
-					'ativo',
-					'nome',
-					'quantidade',
-					'categoria'
-				],
-				'required'
-			]
-		];
-	}
-	
+class Produtos extends ActiveRecord
+{
+    public static function tableName()
+    {
+        return 'produtos';
+    }
+
+    public function rules()
+    {
+        return [
+            [['nome', 'quantidade', 'categoria'], 'required'],
+            [['quantidade', 'categoria'], 'integer'],
+            [['nome'], 'string', 'max' => 255],
+            [['ativo'], 'default', 'value' => 1],
+        ];
+    }
 }
 
 ?>

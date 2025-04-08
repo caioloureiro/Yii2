@@ -35,6 +35,9 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                    'create' => ['post'],
+                    'update' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -53,6 +56,9 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+			'create' => 'app\controllers\actions\CreateAction',
+            'update' => 'app\controllers\actions\UpdateAction',
+            'delete' => 'app\controllers\actions\DeleteAction',
         ];
     }
 
@@ -67,7 +73,7 @@ class SiteController extends Controller
 		$produtos = Produtos::find()->all(); //PUXA A TABELA PRODUTOS
 		$categorias = Categorias::find()->all(); //PUXA A TABELA PRODUTOS
 		//echo '<pre>'; print_r( $categorias ); echo'</pre>'; exit; //TESTE
-		
+	
         return $this->render(
 			'index',
 			[
@@ -75,7 +81,76 @@ class SiteController extends Controller
 				'categorias' => $categorias
 			]
 		);
+		
     }
+	
+	public function actionCreate()
+	{
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		
+		try {
+			$model = new Produtos();
+			if (!$model->load(Yii::$app->request->post())) {
+				throw new \Exception('Falha ao carregar dados');
+			}
+			
+			if (!$model->save()) {
+				return $this->asJson([
+					'success' => false,
+					'errors' => $model->errors
+				]);
+			}
+			
+			return $this->asJson([
+				'success' => true,
+				'id' => $model->id
+			]);
+			
+		} catch (\Exception $e) {
+			Yii::error($e->getMessage());
+			return $this->asJson([
+				'success' => false,
+				'errors' => $e->getMessage()
+			]);
+		}
+	}
+
+	public function actionUpdate($id)
+	{
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		
+		$model = Produtos::findOne($id);
+		
+		if (!$model) {
+			return ['success' => false, 'errors' => ['Produto não encontrado']];
+		}
+		
+		if ($model->load(Yii::$app->request->post())) {
+			if ($model->save()) {
+				return ['success' => true];
+			}
+			return ['success' => false, 'errors' => $model->errors];
+		}
+		
+		return ['success' => false, 'errors' => 'Dados inválidos'];
+	}
+
+	public function actionDelete($id)
+	{
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		
+		$model = Produtos::findOne($id);
+		
+		if (!$model) {
+			return ['success' => false, 'errors' => ['Produto não encontrado']];
+		}
+		
+		if ($model->delete()) {
+			return ['success' => true];
+		}
+		
+		return ['success' => false, 'errors' => 'Erro ao excluir'];
+	}
 
     /**
      * Login action.

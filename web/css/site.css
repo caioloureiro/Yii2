@@ -13,6 +13,7 @@ background-color: white;
 padding: 2vw;
 border-radius: 0.5vw;
 box-shadow: 0 0 1vw rgba(0, 0, 0, 0.1);
+margin-top: 5vw;
 }
 h1 {
 font-size: 2vw;
@@ -68,7 +69,7 @@ font-size: 1vw;
 border: 0;
 height: 0.1vw;
 background-color: #ddd;
-margin: 2vw 0;
+margin: 0.5vw 0;
 }
 .crud-actions {
 display: flex;

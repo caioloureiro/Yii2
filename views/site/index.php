@@ -13,7 +13,13 @@ $this->title = 'API Yii2 para Angular';
 <style><?php require '../web/css/site.css'; ?></style>
 
 <div class="crud-container">
-	<h1>CRUD Angular2025</h1>
+	<h1>CRUD Yii2</h1>
+	
+	<div class="crud-actions">
+		<button class="add-btn" id="openModalBtn">Criar Item</button>
+	</div>
+	
+	<hr class="divider">
 	
 	<table class="crud-table">
 		<thead>
@@ -82,46 +88,65 @@ $this->title = 'API Yii2 para Angular';
 		</tbody>
 	</table>
 	
-	<hr class="divider">
-	
-	<div class="crud-actions">
-		<button class="add-btn" id="openModalBtn">Criar Item</button>
-	</div>
-	
 	<!-- A Modal -->
 	<div id="itemModal" class="modal">
+	
 		<div class="modal-content">
+		
 			<div class="modal-header">
 				<span class="modal-title">Adicionar Novo Item</span>
 				<span class="close">&times;</span>
 			</div>
 			
-			<div class="modal-body">
-				<div class="form-group">
-					<label for="itemName">Nome:</label>
-					<input type="text" id="itemName" placeholder="Digite o nome do item">
-				</div>
-				
-				<div class="form-group">
-					<label for="itemQuantity">Quantidade:</label>
-					<input type="number" id="itemQuantity" placeholder="Digite a quantidade">
-				</div>
-				
-				<div class="form-group">
-					<label for="itemCategory">Categoria:</label>
-					<select id="itemCategory">
-						<option value="">Selecione uma categoria</option>
-						<option value="esportes">Esportes</option>
-						<option value="eletronicos">Eletrônicos</option>
-					</select>
-				</div>
-			</div>
+			<form method="POST">
 			
-			<div class="modal-footer">
-				<button id="cancelBtn" class="btn btn-secondary">Cancelar</button>
-				<button id="saveBtn" class="btn btn-primary">Gravar</button>
-			</div>
+				<div class="modal-body">
+					
+					<input type="hidden" name="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
+				
+					<div class="form-group">
+						<label for="itemName">Nome:</label>
+						<input type="text" id="itemName" placeholder="Digite o nome do item">
+					</div>
+					
+					<div class="form-group">
+						<label for="itemQuantity">Quantidade:</label>
+						<input type="number" id="itemQuantity" placeholder="Digite a quantidade">
+					</div>
+					
+					<div class="form-group">
+						<label for="itemCategory">Categoria:</label>
+						<select id="itemCategory">
+							<option value="">Selecione uma categoria</option>
+							<?php
+								
+								foreach( $categorias as $cat ){
+								
+									echo'<option value="'. $cat['id'] .'">'. $cat['name'] .'</option>';
+									
+								}
+								
+							?>
+						</select>
+					</div>
+				</div>
+				
+				<div class="modal-footer">
+					<div 
+						id="cancelBtn" 
+						class="btn btn-secondary"
+					>Cancelar</div>
+					<button 
+						id="saveBtn" 
+						class="btn btn-primary"
+						type="submit"
+					>Gravar</button>
+				</div>
+				
+			</form>
+			
 		</div>
+		
 	</div>
 	
 	<script>
@@ -153,22 +178,43 @@ $this->title = 'API Yii2 para Angular';
 			}
 		});
 		
-		// Função para gravar os dados (você pode implementar a lógica aqui)
-		document.getElementById("saveBtn").addEventListener("click", function() {
-			const name = document.getElementById("itemName").value;
-			const quantity = document.getElementById("itemQuantity").value;
-			const category = document.getElementById("itemCategory").value;
+		// Função para gravar os dados
+		document.getElementById("saveBtn").addEventListener("click", async function(e) {
+			e.preventDefault();
 			
-			// Aqui você pode adicionar a lógica para salvar os dados
-			console.log("Dados a serem salvos:", { name, quantity, category });
-			
-			// Fechar a modal após salvar
-			modal.style.display = "none";
-			
-			// Limpar os campos
-			document.getElementById("itemName").value = "";
-			document.getElementById("itemQuantity").value = "";
-			document.getElementById("itemCategory").value = "";
+			try {
+				const response = await fetch('/site/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-Requested-With': 'XMLHttpRequest'
+					},
+					body: new URLSearchParams({
+						'Produtos[nome]': document.getElementById('itemName').value,
+						'Produtos[quantidade]': document.getElementById('itemQuantity').value,
+						'Produtos[categoria]': document.getElementById('itemCategory').value,
+						'_csrf': document.querySelector('meta[name="csrf-token"]').content
+					})
+				});
+
+				// Verifica se a resposta é JSON
+				const contentType = response.headers.get('content-type');
+				if (!contentType || !contentType.includes('application/json')) {
+					const text = await response.text();
+					throw new Error(`Resposta inválida: ${text}`);
+				}
+
+				const data = await response.json();
+				
+				if (data.success) {
+					location.reload();
+				} else {
+					alert('Erro: ' + JSON.stringify(data.errors));
+				}
+			} catch (error) {
+				console.error('Erro na requisição:', error);
+				alert('Erro ao comunicar com o servidor: ' + error.message);
+			}
 		});
 		
 		// Função para preencher a modal com dados do item a ser editado
@@ -182,9 +228,16 @@ $this->title = 'API Yii2 para Angular';
 			// Preencher os campos da modal
 			document.getElementById('itemName').value = nome;
 			document.getElementById('itemQuantity').value = quantidade;
-			document.getElementById('itemCategory').value = categoriaId;
 			
-			// Armazenar o ID do item sendo editado (pode ser útil para o submit)
+			// Selecionar a categoria correta no dropdown
+			const selectCategoria = document.getElementById('itemCategory');
+			if (categoriaId) {
+				selectCategoria.value = categoriaId;
+			} else {
+				selectCategoria.value = ""; // Caso não tenha categoria definida
+			}
+			
+			// Armazenar o ID do item sendo editado
 			document.getElementById('itemModal').setAttribute('data-editing-id', id);
 			
 			// Alterar o título da modal

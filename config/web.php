@@ -15,6 +15,7 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'c97e2b57a6c44cb28aa98211dad2811f',
+			'enableCsrfValidation' => true, // Deve estar true
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -35,21 +36,23 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
+				[
+					'class' => 'yii\log\FileTarget',
+					'levels' => ['error', 'warning', 'info'],
+					'logFile' => '@app/runtime/logs/app.log',
+				],
+			],
         ],
         'db' => $db,
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
-        ],
-        */
+		'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+			'rules' => [
+				'site/create' => 'site/create',
+				'site/update/<id:\d+>' => 'site/update',
+				'site/delete/<id:\d+>' => 'site/delete',
+			],
+		],
     ],
     'params' => $params,
 ];
