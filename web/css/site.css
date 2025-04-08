@@ -83,4 +83,92 @@ font-size: 1vw;
 .download-link:hover {
 text-decoration: underline;
 }
+.modal {
+display: none;
+position: fixed;
+z-index: 1;
+left: 0;
+top: 0;
+width: 100vw;
+height: 100vh;
+overflow: auto;
+background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+background-color: #fefefe;
+margin: 15vh auto;
+padding: 2vw;
+border: 0.1vw solid #888;
+width: 50vw;
+border-radius: 0.5vw;
+box-shadow: 0 0.5vw 1.5vw rgba(0,0,0,0.3);
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 2vw;
+}
+
+.modal-title {
+font-size: 1.5vw;
+font-weight: bold;
+}
+
+.close {
+color: #aaa;
+font-size: 2vw;
+font-weight: bold;
+cursor: pointer;
+}
+
+.close:hover {
+color: black;
+}
+
+.form-group {
+margin-bottom: 1.5vw;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 0.5vw;
+font-weight: bold;
+}
+
+.form-group input, 
+.form-group select {
+width: 100%;
+padding: 0.8vw;
+border: 0.1vw solid #ddd;
+border-radius: 0.3vw;
+font-size: 1vw;
+}
+
+.modal-footer {
+display: flex;
+justify-content: flex-end;
+gap: 1vw;
+margin-top: 2vw;
+}
+
+.btn {
+padding: 0.8vw 1.5vw;
+border: none;
+border-radius: 0.3vw;
+cursor: pointer;
+font-size: 1vw;
+}
+
+.btn-primary {
+background-color: #4CAF50;
+color: white;
+}
+
+.btn-secondary {
+background-color: #f44336;
+color: white;
+}
 /*End - web/css/site.css*/

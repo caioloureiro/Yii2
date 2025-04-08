@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Produtos;
+use app\models\Categorias;
 
 class SiteController extends Controller
 {
@@ -64,11 +65,15 @@ class SiteController extends Controller
     {
 		
 		$produtos = Produtos::find()->all(); //PUXA A TABELA PRODUTOS
-		//echo '<pre>'; print_r( $produtos ); echo'</pre>'; exit; //TESTE
+		$categorias = Categorias::find()->all(); //PUXA A TABELA PRODUTOS
+		//echo '<pre>'; print_r( $categorias ); echo'</pre>'; exit; //TESTE
 		
         return $this->render(
 			'index',
-			['produtos' => $produtos]
+			[
+				'produtos' => $produtos,
+				'categorias' => $categorias
+			]
 		);
     }
 
