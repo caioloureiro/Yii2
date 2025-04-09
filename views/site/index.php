@@ -15,7 +15,7 @@ $this->title = 'API Yii2 para Angular';
 <style><?php require '../web/css/site.css'; ?></style>
 
 <div class="crud-container">
-	<h1>CRUD Yii2</h1>
+	<h1>CRUD Yii2 com API</h1>
 	
 	<div class="crud-actions">
 		<?= Html::a( 'Criar item', ['/site/create'], ['class' => 'add-btn'] ) ?>
