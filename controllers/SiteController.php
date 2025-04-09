@@ -14,203 +14,180 @@ use app\models\Categorias;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                    'create' => ['post'],
-                    'update' => ['post'],
-                    'delete' => ['post'],
-                ],
-            ],
-        ];
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors()
+	{
+		return [
+			'access' => [
+				'class' => AccessControl::class,
+				'only' => ['logout'],
+				'rules' => [
+					[
+						'actions' => ['logout'],
+						'allow' => true,
+						'roles' => ['@'],
+					],
+				],
+			],
+			'verbs' => [
+				'class' => VerbFilter::class,
+				'actions' => [
+					'logout' => ['post'],
+				],
+			],
+		];
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
-			'create' => 'app\controllers\actions\CreateAction',
-            'update' => 'app\controllers\actions\UpdateAction',
-            'delete' => 'app\controllers\actions\DeleteAction',
-        ];
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function actions()
+	{
+		return [
+			'error' => [
+				'class' => 'yii\web\ErrorAction',
+			],
+			'captcha' => [
+				'class' => 'yii\captcha\CaptchaAction',
+				'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+			],
+		];
+	}
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
+	/**
+	 * Displays homepage.
+	 *
+	 * @return string
+	 */
+	public function actionIndex()
+	{
+		$produtos = Produtos::find()->all();
+		$categorias = Categorias::find()->all();
 		
-		$produtos = Produtos::find()->all(); //PUXA A TABELA PRODUTOS
-		$categorias = Categorias::find()->all(); //PUXA A TABELA PRODUTOS
-		//echo '<pre>'; print_r( $categorias ); echo'</pre>'; exit; //TESTE
-	
-        return $this->render(
-			'index',
+		//echo '<pre>'; print_r( $produtos ); echo'</pre>'; exit;
+		//echo '<pre>'; print_r( $categorias ); echo'</pre>'; exit;
+		
+		return $this->render( 
+			'index', 
 			[
 				'produtos' => $produtos,
-				'categorias' => $categorias
+				'categorias' => $categorias,
 			]
 		);
-		
-    }
+	}
 	
 	public function actionCreate()
 	{
-		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$produto = new Produtos();
+		$categorias = Categorias::find()->all();
 		
-		try {
-			$model = new Produtos();
-			if (!$model->load(Yii::$app->request->post())) {
-				throw new \Exception('Falha ao carregar dados');
+		
+		if( $produto->load( Yii::$app->request->post() ) ){
+			
+			if( $produto->save() ){
+				
+				Yii::$app->session->setFlash('success', 'Item criado com sucesso.');
+				return $this->redirect(['index']);
+				
+			}
+			else{
+				
+				// Mostra os erros de validação no flash message
+				$errors = implode('<br>', $produto->getFirstErrors());
+				Yii::$app->session->setFlash('error', 'Erro ao gravar: ' . $errors);
+				
+				// Log para depuração
+				Yii::error('Erro ao salvar produto: ' . print_r($produto->errors, true));
+				
 			}
 			
-			if (!$model->save()) {
-				return $this->asJson([
-					'success' => false,
-					'errors' => $model->errors
-				]);
-			}
-			
-			return $this->asJson([
-				'success' => true,
-				'id' => $model->id
-			]);
-			
-		} catch (\Exception $e) {
-			Yii::error($e->getMessage());
-			return $this->asJson([
-				'success' => false,
-				'errors' => $e->getMessage()
-			]);
 		}
+		
+		return $this->render(
+			'create', 
+			[
+				'produto' => $produto,
+				'categorias' => $categorias,
+			]
+		);
+		
 	}
-
-	public function actionUpdate($id)
+	
+	public function actionUpdate()
 	{
-		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		echo'Update';
 		
-		$model = Produtos::findOne($id);
-		
-		if (!$model) {
-			return ['success' => false, 'errors' => ['Produto não encontrado']];
-		}
-		
-		if ($model->load(Yii::$app->request->post())) {
-			if ($model->save()) {
-				return ['success' => true];
-			}
-			return ['success' => false, 'errors' => $model->errors];
-		}
-		
-		return ['success' => false, 'errors' => 'Dados inválidos'];
+		//return $this->render('update');
 	}
-
-	public function actionDelete($id)
+	
+	public function actionDelete()
 	{
-		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		echo'Delete';
 		
-		$model = Produtos::findOne($id);
-		
-		if (!$model) {
-			return ['success' => false, 'errors' => ['Produto não encontrado']];
-		}
-		
-		if ($model->delete()) {
-			return ['success' => true];
-		}
-		
-		return ['success' => false, 'errors' => 'Erro ao excluir'];
+		//return $this->render('delete');
 	}
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+	/**
+	 * Login action.
+	 *
+	 * @return Response|string
+	 */
+	public function actionLogin()
+	{
+		if (!Yii::$app->user->isGuest) {
+			return $this->goHome();
+		}
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
+		$model = new LoginForm();
+		if ($model->load(Yii::$app->request->post()) && $model->login()) {
+			return $this->goBack();
+		}
 
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
+		$model->password = '';
+		return $this->render('login', [
+			'model' => $model,
+		]);
+	}
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
+	/**
+	 * Logout action.
+	 *
+	 * @return Response
+	 */
+	public function actionLogout()
+	{
+		Yii::$app->user->logout();
 
-        return $this->goHome();
-    }
+		return $this->goHome();
+	}
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
+	/**
+	 * Displays contact page.
+	 *
+	 * @return Response|string
+	 */
+	public function actionContact()
+	{
+		$model = new ContactForm();
+		if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+			Yii::$app->session->setFlash('contactFormSubmitted');
 
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
+			return $this->refresh();
+		}
+		return $this->render('contact', [
+			'model' => $model,
+		]);
+	}
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
+	/**
+	 * Displays about page.
+	 *
+	 * @return string
+	 */
+	public function actionAbout()
+	{
+		return $this->render('about');
+	}
 }
