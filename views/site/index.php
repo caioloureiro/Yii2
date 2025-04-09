@@ -41,35 +41,44 @@ $this->title = 'API Yii2 para Angular';
 					
 					foreach( $produtos as $produto ){
 						
-						$categoria = '';
+						if( $produto['ativo'] != 0 ){
 						
-						foreach( $categorias as $cat ){
+							$categoria = '';
 							
-							if( $cat['id'] == $produto['categoria'] ){
+							foreach( $categorias as $cat ){
 								
-								$categoria = $cat['name'];
+								if( $cat['id'] == $produto['categoria'] ){
+									
+									$categoria = $cat['name'];
+									
+								}
 								
 							}
 							
+							echo'
+							<tr>
+								<td>'. $produto['id'] .'</td>
+								<td>'. $produto['nome'] .'</td>
+								<td>'. $produto['quantidade'] .'</td>
+								<td>'. $categoria .'</td>
+								<td class="actions">
+									';
+									
+									echo Html::a( 'Editar', ['update', 'id' => $produto->id], ['class' => 'edit-btn'] );
+									echo Html::a('Excluir', ['site/delete', 'id' => $produto['id']], [
+										'class' => 'del-btn',
+										'data' => [
+											'confirm' => 'Tem certeza que deseja excluir este item?',
+											'method' => 'post',
+										],
+									]);
+									
+									echo'
+								</td>
+							</tr>
+							';
+							
 						}
-						
-						echo'
-						<tr>
-							<td>'. $produto['id'] .'</td>
-							<td>'. $produto['nome'] .'</td>
-							<td>'. $produto['quantidade'] .'</td>
-							<td>'. $categoria .'</td>
-							<td class="actions">
-								<button class="edit-btn" 
-									data-id="'. $produto['id'] .'"
-									data-nome="'. $produto['nome'] .'"
-									data-quantidade="'. $produto['quantidade'] .'"
-									data-categoria="'. $produto['categoria'] .'"
-								>Editar</button>
-								<button class="del-btn">Excluir</button>
-							</td>
-						</tr>
-						';
 						
 					}
 					

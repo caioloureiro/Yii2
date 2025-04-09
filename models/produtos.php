@@ -28,6 +28,15 @@ class Produtos extends ActiveRecord
             // Remove 'id' das regras pois é auto-incremento
         ];
     }
+	
+	/**
+     * Realiza o soft delete (marca como inativo)
+     */
+    public function softDelete()
+    {
+        $this->ativo = 0;
+        return $this->save(false); // O false ignora a validação
+    }
 
     /**
      * @return array rótulos para os atributos

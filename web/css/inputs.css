@@ -9,6 +9,14 @@ background-color: #f5f5f5;
 .alert{
 margin-top:5vw;
 }
+a,
+a:active,
+a:visited,
+a:focus{
+text-decoration: none;
+color:inherit;
+font-weight: inherit;
+}
 .inputs-container {
 max-width: 41.7vw;
 margin: 0 auto;
@@ -48,6 +56,14 @@ box-sizing: border-box;
 margin-top: 1vw;
 }
 .inputs-container button {
+padding: 0.5vw 0.8vw;
+margin-right: 0.5vw;
+border: none;
+border-radius: 0.2vw;
+cursor: pointer;
+font-weight: bold;
+}
+.inputs-container a {
 padding: 0.5vw 0.8vw;
 margin-right: 0.5vw;
 border: none;

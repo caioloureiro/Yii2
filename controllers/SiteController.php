@@ -83,7 +83,6 @@ class SiteController extends Controller
 		$produto = new Produtos();
 		$categorias = Categorias::find()->all();
 		
-		
 		if( $produto->load( Yii::$app->request->post() ) ){
 			
 			if( $produto->save() ){
@@ -115,18 +114,54 @@ class SiteController extends Controller
 		
 	}
 	
-	public function actionUpdate()
+	public function actionUpdate($id)
 	{
-		echo'Update';
+		$produto = Produtos::findOne($id);
+		$produtos = Produtos::find()->all();
+		$categorias = Categorias::find()->all();
 		
-		//return $this->render('update');
+		if( 
+			$produto->load( Yii::$app->request->post() )
+			&& $produto->save()
+		){
+			
+			Yii::$app->session->setFlash('success', 'Item editado com sucesso.');
+			return $this->redirect(['index', 'id' => $produto->id]);
+			
+		}
+		else{
+			
+			return $this->render( 
+				'update', 
+				[
+					'produto' => $produto,
+					'produtos' => $produtos,
+					'categorias' => $categorias,
+				]
+			);
+			
+		}
+		
 	}
 	
-	public function actionDelete()
+	public function actionDelete($id)
 	{
-		echo'Delete';
-		
-		//return $this->render('delete');
+		// Encontra o produto pelo ID
+		$produto = Produtos::findOne($id);
+
+		if (!$produto) {
+			Yii::$app->session->setFlash('error', 'Produto não encontrado.');
+			return $this->redirect(['index']);
+		}
+
+		// Realiza o soft delete
+		if ($produto->softDelete()) {
+			Yii::$app->session->setFlash('success', 'Produto excluído com sucesso.');
+		} else {
+			Yii::$app->session->setFlash('error', 'Erro ao excluído produto.');
+		}
+
+		return $this->redirect(['index']);
 	}
 
 	/**
